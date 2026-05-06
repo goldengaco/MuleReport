@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const TimelineChart = ({ data }) => {
@@ -8,8 +9,8 @@ const TimelineChart = ({ data }) => {
   );
 
   return (
-    <div style={{ width: '100%', height: 200 }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div style={{ width: '100%', height: 200, minHeight: 200 }}>
+      <ResponsiveContainer width="99%" height="100%">
         <AreaChart
           data={data}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
@@ -58,4 +59,4 @@ const TimelineChart = ({ data }) => {
   );
 };
 
-export default TimelineChart;
+export default memo(TimelineChart);

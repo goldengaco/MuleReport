@@ -25,6 +25,8 @@ const DashboardView = ({ file, onReset }) => {
     handleSearchInput,
     handleFilterChange,
     handlePageChange,
+    handlePrefetch,
+    handleExportCSV,
     reload
   } = useDashboardData(file);
 
@@ -71,10 +73,17 @@ const DashboardView = ({ file, onReset }) => {
           </button>
           <button
             className="glass-panel action-btn"
+            style={{ color: 'var(--accent-primary)' }}
+            onClick={handleExportCSV}
+          >
+            <Download size={14} /> CSV
+          </button>
+          <button
+            className="glass-panel action-btn"
             style={{ color: 'var(--text-secondary)' }}
             onClick={() => window.print()}
           >
-            <Download size={14} /> Exportar PDF
+            <Download size={14} /> PDF
           </button>
         </div>
       </div>
@@ -101,7 +110,10 @@ const DashboardView = ({ file, onReset }) => {
           </h3>
           {loading
             ? <div className="loader-box">Cargando…</div>
-            : <ActionChart data={actionsData} />}
+            : <ActionChart 
+                data={actionsData} 
+                onActionClick={(action) => handleFilterChange('action', action)} 
+              />}
         </div>
       </div>
 
@@ -123,6 +135,7 @@ const DashboardView = ({ file, onReset }) => {
         totalCount={totalFiltered}
         page={page}
         onPageChange={handlePageChange}
+        onPrefetch={handlePrefetch}
       />
 
       <style>{`
@@ -142,12 +155,18 @@ const DashboardView = ({ file, onReset }) => {
           align-items: center; 
           gap: 0.4rem;
         }
-        .loader-box {
-          height: 200px; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
-          color: var(--text-muted);
+        @media print {
+          .header button, .action-btn, .pagination-container, .filter-bar, .payload-trigger { display: none !important; }
+          .main-content { padding: 0 !important; background: white !important; }
+          .glass-panel { 
+            background: white !important; 
+            border: 1px solid #eee !important; 
+            box-shadow: none !important; 
+            color: black !important;
+            break-inside: avoid;
+          }
+          h1, h3, p, span, th, td { color: black !important; }
+          .text-gradient { background: none !important; -webkit-text-fill-color: black !important; }
         }
       `}</style>
     </div>

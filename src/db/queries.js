@@ -22,9 +22,9 @@ const resolveCol = (columns, ...candidates) => {
 const buildWhere = (columns, filters) => {
   const conds = [];
   if (filters.search?.trim()) {
-    const term = filters.search.trim().replace(/'/g, "''");
-    const parts = columns.map(col => `CAST("${col}" AS VARCHAR) ILIKE '%${term}%'`);
-    conds.push(`(${parts.join(' OR ')})`);
+    const term = filters.search.trim().toLowerCase().replace(/'/g, "''");
+    // Usamos la columna pre-calculada search_index para máximo rendimiento
+    conds.push(`search_index LIKE '%${term}%'`);
   }
   const actionCol = resolveCol(columns, 'Action', 'action');
   if (filters.action && filters.action !== 'all' && actionCol) {
@@ -115,4 +115,12 @@ export const getTimelineData = async () => {
     console.warn('Timeline error:', e.message);
     return [];
   }
+};
+export const getLogsAllFiltered = async (filters = {}) => {
+  const columns = await getTableColumns();
+  const where = buildWhere(columns, filters);
+  const timeCol = resolveCol(columns, 'Time', 'Timestamp', 'Date', 'Created At');
+  const orderBy = timeCol ? `"${timeCol}" DESC` : `"${columns[0]}" DESC`;
+  // Excluimos search_index para que el CSV del usuario esté limpio
+  return executeQuery(`SELECT * EXCLUDE (search_index) FROM logs ${where} ORDER BY ${orderBy}`);
 };

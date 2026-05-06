@@ -70,12 +70,33 @@ export const importCSV = async (file) => {
       result = await tryLoad(`, delim='\\t'`);
     }
 
-    console.log('Resultado final:', result.count, 'filas, columnas:', result.cols);
-
-    if (result.count === 0) {
-      throw new Error('No se detectaron datos en el archivo. Verifica que el CSV sea válido y no esté vacío.');
-    }
+    // Crear columna de búsqueda unificada para máximo rendimiento
+    console.log('Optimizando tabla para búsquedas rápidas...');
+    const colsRes = await connection.query(`PRAGMA table_info('logs')`);
+    const cols = colsRes.toArray().map(r => r.toJSON().name);
     
+    const priorityCols = cols.filter(col => {
+      const low = col.toLowerCase();
+      return low.includes('user') || low.includes('action') || low.includes('payload') || 
+             low.includes('message') || low.includes('env') || low.includes('fail') ||
+             low.includes('name') || low.includes('data');
+    });
+
+    const searchVectorExpr = priorityCols.map(c => `lower(coalesce("${c}", ''))`).join(" || ' ' || ");
+    
+    await connection.query(`
+      ALTER TABLE logs ADD COLUMN search_index VARCHAR;
+      UPDATE logs SET search_index = ${searchVectorExpr};
+    `);
+
+    // Intentar crear un índice en el tiempo para ordenamiento veloz
+    const timeCol = cols.find(c => ['time', 'timestamp', 'date', 'created at'].includes(c.toLowerCase()));
+    if (timeCol) {
+      try {
+        await connection.query(`CREATE INDEX idx_logs_time ON logs("${timeCol}")`);
+      } catch(e) { console.warn('No se pudo crear índice de tiempo'); }
+    }
+
     return true;
   } catch (error) {
     console.error('ERROR EN IMPORTACIÓN:', error);

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Users, Activity, ListChecks, Globe, AlertTriangle } from 'lucide-react';
 import KpiCard from './KpiCard';
 
@@ -13,4 +14,4 @@ const KpiGrid = ({ metrics }) => {
   );
 };
 
-export default KpiGrid;
+export default memo(KpiGrid);

@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#6366F1', '#F43F5E'];
 
-const ActionChart = ({ data }) => {
+const ActionChart = ({ data, onActionClick }) => {
   if (!data || data.length === 0) {
     return (
       <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
@@ -12,8 +13,8 @@ const ActionChart = ({ data }) => {
   }
 
   return (
-    <div style={{ width: '100%', height: 300 }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div style={{ width: '100%', height: 300, minHeight: 300 }}>
+      <ResponsiveContainer width="99%" height="100%">
         <BarChart
           data={data}
           layout="vertical"
@@ -39,7 +40,13 @@ const ActionChart = ({ data }) => {
               color: '#fff'
             }}
           />
-          <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
+          <Bar 
+            dataKey="count" 
+            radius={[0, 4, 4, 0]} 
+            barSize={20}
+            onClick={(data) => onActionClick && onActionClick(data.Action)}
+            style={{ cursor: 'pointer' }}
+          >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
@@ -50,4 +57,4 @@ const ActionChart = ({ data }) => {
   );
 };
 
-export default ActionChart;
+export default memo(ActionChart);

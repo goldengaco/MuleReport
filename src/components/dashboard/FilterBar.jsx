@@ -1,7 +1,8 @@
+import { useState, useEffect, memo } from 'react';
 import { Search, Filter, Globe, ListChecks } from 'lucide-react';
 
 const FilterBar = ({ 
-  searchInput, 
+  searchInput: externalSearchInput, 
   onSearchChange, 
   filterOptions, 
   filters, 
@@ -9,6 +10,30 @@ const FilterBar = ({
   totalCount, 
   tableLoading 
 }) => {
+  const [localSearch, setLocalSearch] = useState(externalSearchInput);
+  const inputRef = import('react').then(m => m.useRef(null)); // Usaremos un ref para el input
+
+  // Atajo de teclado '/'
+  useEffect(() => {
+    const handleGlobalKey = (e) => {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        document.getElementById('global-search')?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKey);
+    return () => window.removeEventListener('keydown', handleGlobalKey);
+  }, []);
+
+  // Sincronizar si el valor externo cambia (ej. al resetear)
+  useEffect(() => {
+    setLocalSearch(externalSearchInput);
+  }, [externalSearchInput]);
+
+  const handleInputChange = (val) => {
+    setLocalSearch(val);
+    onSearchChange(val);
+  };
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: '1rem', flexWrap: 'wrap' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
@@ -26,10 +51,11 @@ const FilterBar = ({
         <div style={{ position: 'relative' }}>
           <Search size={14} style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
           <input
+            id="global-search"
             type="text"
-            placeholder="Buscar en todas las columnas…"
-            value={searchInput}
-            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Buscar… (Pulsa /)"
+            value={localSearch}
+            onChange={(e) => handleInputChange(e.target.value)}
             className="filter-input"
             style={{ width: '260px' }}
           />
@@ -73,4 +99,4 @@ const FilterBar = ({
   );
 };
 
-export default FilterBar;
+export default memo(FilterBar);
