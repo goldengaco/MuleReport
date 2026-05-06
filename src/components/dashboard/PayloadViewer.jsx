@@ -61,9 +61,9 @@ const PayloadViewer = ({ value }) => {
         <div
           onClick={(e) => e.target === e.currentTarget && setOpen(false)}
           style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 9999, padding: '1rem', backdropFilter: 'blur(4px)',
+            zIndex: 9999, padding: '1rem'
           }}
         >
           <div style={{

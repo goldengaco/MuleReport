@@ -1,0 +1,51 @@
+.filter-input {
+  padding: 0.45rem 0.75rem 0.45rem 2rem;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-input:focus {
+  border-color: var(--accent-primary);
+}
+
+.filter-select {
+  padding: 0.45rem 0.75rem 0.45rem 1.75rem;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+}
+
+.filter-select option {
+  background: #111827;
+}
+
+.pagination-btn {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.pagination-btn:disabled {
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
